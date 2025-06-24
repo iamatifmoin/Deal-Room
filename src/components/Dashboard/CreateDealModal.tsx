@@ -69,10 +69,8 @@ const CreateDealModal: React.FC<CreateDealModalProps> = ({
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/users?role=seller"
-        ); // ensure your backend supports this
-        setSellers(res.data);
+        const res = await api.get("/users?role=seller");
+        setSellers(res);
       } catch (error) {
         console.error("Error fetching sellers:", error);
       }

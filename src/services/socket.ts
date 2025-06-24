@@ -3,7 +3,7 @@ import { store } from "../store";
 import { addMessage, setTypingUsers } from "../store/slices/chatSlice";
 import { updateDeal } from "../store/slices/dealsSlice";
 
-const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 
 class SocketService {
   private socket: Socket | null = null;

@@ -20,9 +20,21 @@ dotenv.config();
 
 const app = express();
 const server = createServer(app);
+const allowedOrigin = [
+  process.env.CLIENT_URL, // e.g. "https://deal-room-eta.vercel.app"
+  "http://localhost:5173",
+];
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigin.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error("❌ Socket.IO CORS not allowed:", origin);
+        callback(new Error("Socket.IO CORS not allowed: " + origin));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -36,7 +48,23 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(limiter);
-app.use(cors());
+const allowedOrigins = [
+  process.env.CLIENT_URL, // e.g. https://your-vercel.vercel.app
+  "http://localhost:5173", // local Vite dev frontend
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("❌ CORS not allowed: " + origin));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
